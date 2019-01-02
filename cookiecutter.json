@@ -1,0 +1,4 @@
+{
+    "package_name": "Modern Python package",
+    "package_slug": "{{ cookiecutter.package_name.lower().replace(' ', '_').replace('-', '_') }}"
+}
