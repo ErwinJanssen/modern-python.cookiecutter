@@ -16,4 +16,8 @@ Highlights:
     way for many project to manage their metadata, but since it is a Python
     script, things tend to get overly complex. The `setup.cfg` file provides a
     cleaner and more structured alternative. The `setup.py` file remains
-    present, since the `setup()` call is mandatory for setuptools to function.
+    present, since the `setup()` call is mandatory for setuptools to function,
+    and not all features are supported in `setup.cfg`.
+-   Uses the source control management to specify the version number (e.g. git
+    tags), instead of manually keeping them up to date in `setup.cfg` and
+    `__version__`.
