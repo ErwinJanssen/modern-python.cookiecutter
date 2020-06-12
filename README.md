@@ -1,6 +1,6 @@
-# Cookiecutter: Modern Python package
+# Cookiecutter: Modern Python project
 
-This Cookiecutter provides a template for modern Python packages. It provides
+This Cookiecutter provides a template for modern Python projects. It provides
 best practices, and uses modern versions of tooling, which allows a better
 packaging experience.
 

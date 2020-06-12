@@ -1,4 +1,4 @@
 {
-    "package_name": "Modern Python package",
-    "package_slug": "{{ cookiecutter.package_name.lower().replace(' ', '_').replace('-', '_') }}"
+    "project_name": "Modern Python project",
+    "project_slug": "{{ cookiecutter.project_name.lower().replace(' ', '_').replace('-', '_') }}"
 }

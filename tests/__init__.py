@@ -29,14 +29,14 @@ class BaseTestCase(unittest.TestCase):
         self.tempdir.cleanup()
 
 
-class TestPackageSlug(BaseTestCase):
-    def test_specify_package_slug(self):
-        package_name = "Test Package"
-        package_slug = "test_package"
+class TestProjectSlug(BaseTestCase):
+    def test_specify_project_slug(self):
+        project_name = "Test Project"
+        project_slug = "test_project"
 
         cookiecutter(
             **self.default_args,
-            extra_context={"package_name": package_name, "package_slug": package_slug,}
+            extra_context={"project_name": project_name, "project_slug": project_slug,}
         )
 
         # There should be a single generated folder in the tempdir, and the
@@ -46,14 +46,14 @@ class TestPackageSlug(BaseTestCase):
 
         result_path = contents[0]
         self.assertTrue(result_path.is_dir)
-        self.assertEqual(result_path.name, package_slug)
+        self.assertEqual(result_path.name, project_slug)
 
-    def test_infer_package_slug(self):
-        package_name = "Other Test Package"
-        package_slug = "other_test_package"
+    def test_infer_project_slug(self):
+        project_name = "Other Test Project"
+        project_slug = "other_test_project"
 
-        # Do not pass the package_slug
-        cookiecutter(**self.default_args, extra_context={"package_name": package_name,})
+        # Do not pass the project_slug
+        cookiecutter(**self.default_args, extra_context={"project_name": project_name,})
 
         # There should be a single generated folder in the tempdir, and the
         # name should match the specified project slug.
@@ -62,20 +62,20 @@ class TestPackageSlug(BaseTestCase):
 
         result_path = contents[0]
         self.assertTrue(result_path.is_dir)
-        self.assertEqual(result_path.name, package_slug)
+        self.assertEqual(result_path.name, project_slug)
 
 
-class TestPackageContents(BaseTestCase):
+class TestProjectContents(BaseTestCase):
     def setUp(self):
         super().setUp()
 
-        self.package_name = "Test package"
-        self.package_slug = "test_package"
-        self.package_path = self.tempdir_path / self.package_slug
+        self.project_name = "Test project"
+        self.project_slug = "test_project"
+        self.project_path = self.tempdir_path / self.project_slug
 
         self.default_args["extra_context"] = {
-            "package_name": self.package_name,
-            "package_slug": self.package_slug,
+            "project_name": self.project_name,
+            "project_slug": self.project_slug,
         }
 
     def test_toplevel_defaults(self):
@@ -88,5 +88,5 @@ class TestPackageContents(BaseTestCase):
             "setup.py",
             "src",
         }
-        actual_contents = {path.name for path in self.package_path.iterdir()}
+        actual_contents = {path.name for path in self.project_path.iterdir()}
         self.assertEqual(actual_contents, expected_contents)
