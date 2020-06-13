@@ -7,106 +7,76 @@ import os
 from cookiecutter.main import cookiecutter
 
 
-class BaseTestCase(unittest.TestCase):
-    def setUp(self):
-        """Create a temporary directory in which the template project can be
-        created, and define some defaults.
-        """
-        self.tempdir = tempfile.TemporaryDirectory()
-        self.tempdir_path = pathlib.Path(self.tempdir.name)
+class TestProjectGeneration(unittest.TestCase):
+    @classmethod
+    def setUpClass(cls):
+        # Create a temporary directory for this test run
+        cls.tempdir = tempfile.TemporaryDirectory()
+        cls.tempdir_path = pathlib.Path(cls.tempdir.name)
 
-        self.default_args = {
-            # The template to test is located in the current working directory
-            "template": ".",
-            # Do not ask for input, as this blocks the test runner
-            "no_input": True,
-            # Use a temporary output directory
-            "output_dir": self.tempdir_path,
-        }
+        cls.output_path = cls.tempdir_path / "output"
+        cls.venv_path = cls.tempdir_path / "venv"
 
-    def tearDown(self):
-        """Cleanup the temporary directory."""
-        self.tempdir.cleanup()
+        # Set variables
+        cls.project_name = "Modern Python"
+        cls.project_slug = "modern_python"
+        cls.project_path = cls.output_path / cls.project_slug
 
-
-class TestProjectSlug(BaseTestCase):
-    def test_specify_project_slug(self):
-        project_name = "Test Project"
-        project_slug = "test_project"
-
+        # Generate the project with Cookiecutter
         cookiecutter(
-            **self.default_args,
-            extra_context={"project_name": project_name, "project_slug": project_slug,}
+            # The template to test is located in the current working directory
+            template=".",
+            # Do not ask for input, as this blocks the test runner
+            no_input=True,
+            # Use a temporary output directory
+            output_dir=cls.output_path,
+            # Additional variables
+            extra_context={
+                "project_name": cls.project_name,
+                "project_slug": cls.project_slug,
+            },
         )
 
-        # There should be a single generated folder in the tempdir, and the
-        # name should match the specified project slug.
-        contents = list(self.tempdir_path.iterdir())
+    def test_directory_name(self):
+        # There should be a single generated folder in `output_path`, and the
+        # name should match the project slug.
+        contents = list(self.output_path.iterdir())
         self.assertEqual(len(contents), 1)
 
         result_path = contents[0]
         self.assertTrue(result_path.is_dir)
-        self.assertEqual(result_path.name, project_slug)
+        self.assertEqual(result_path.name, self.project_slug)
 
-    def test_infer_project_slug(self):
-        project_name = "Other Test Project"
-        project_slug = "other_test_project"
-
-        # Do not pass the project_slug
-        cookiecutter(**self.default_args, extra_context={"project_name": project_name,})
-
-        # There should be a single generated folder in the tempdir, and the
-        # name should match the specified project slug.
-        contents = list(self.tempdir_path.iterdir())
-        self.assertEqual(len(contents), 1)
-
-        result_path = contents[0]
-        self.assertTrue(result_path.is_dir)
-        self.assertEqual(result_path.name, project_slug)
-
-
-class BaseGeneratedTestCase(BaseTestCase):
-
-    def setUp(self):
-        super().setUp()
-
-        self.project_name = "Test project"
-        self.project_slug = "test_project"
-        self.project_path = self.tempdir_path / self.project_slug
-
-        self.default_args["extra_context"] = {
-            "project_name": self.project_name,
-            "project_slug": self.project_slug,
+    def test_toplevel_contents(self):
+        expected = {
+            ".gitignore": False,
+            "pyproject.toml": False,
+            "setup.cfg": False,
+            "setup.py": False,
+            "src": True,
         }
+        actual = {path.name: path.is_dir() for path in self.project_path.iterdir()}
+        self.assertEqual(actual, expected)
 
-        cookiecutter(**self.default_args)
+    def test_src_contents(self):
+        src_path = self.project_path / "src"
 
-
-class TestProjectContents(BaseGeneratedTestCase):
-
-    def test_toplevel_defaults(self):
-        expected_contents = {
-            ".gitignore",
-            "pyproject.toml",
-            "setup.cfg",
-            "setup.py",
-            "src",
+        expected = {
+            self.project_slug: True,
         }
-        actual_contents = {path.name for path in self.project_path.iterdir()}
-        self.assertEqual(actual_contents, expected_contents)
+        actual = {path.name: path.is_dir() for path in src_path.iterdir()}
+        self.assertEqual(actual, expected)
 
-    def test_src_defaults(self):
-        expected_contents = {
-                self.project_slug,
-        }
-        project_src_path = self.project_path / "src"
-        actual_contents = {path.name for path in project_src_path.iterdir()}
-        self.assertEqual(actual_contents, expected_contents)
+    def test_module_contents(self):
+        module_path = self.project_path / "src" / self.project_slug
 
-    def test_package_defaults(self):
-        expected_contents = {
-                "__init__.py",
+        expected = {
+            "__init__.py": False,
         }
-        project_package_path = self.project_path / "src" / self.project_slug
-        actual_contents = {path.name for path in project_package_path.iterdir()}
-        self.assertEqual(actual_contents, expected_contents)
+        actual = {path.name: path.is_dir() for path in module_path.iterdir()}
+        self.assertEqual(actual, expected)
+
+    @classmethod
+    def tearDownClass(cls):
+        # Cleanup the temporary directory
+        cls.tempdir.cleanup()
