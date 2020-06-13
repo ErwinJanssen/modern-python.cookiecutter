@@ -24,7 +24,8 @@ class TestProjectGeneration(unittest.TestCase):
 
         # Set variables
         cls.project_name = "Modern Python"
-        cls.project_slug = "modern_python"
+        cls.project_slug = "modern-python"
+        cls.module_slug = "modern_python"
         cls.project_path = cls.output_path / cls.project_slug
 
         # Generate the project with Cookiecutter
@@ -68,13 +69,13 @@ class TestProjectGeneration(unittest.TestCase):
         src_path = self.project_path / "src"
 
         expected = {
-            self.project_slug: True,
+            self.module_slug: True,
         }
         actual = {path.name: path.is_dir() for path in src_path.iterdir()}
         self.assertEqual(actual, expected)
 
     def test_module_contents(self):
-        module_path = self.project_path / "src" / self.project_slug
+        module_path = self.project_path / "src" / self.module_slug
 
         expected = {
             "__init__.py": False,
