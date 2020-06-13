@@ -1,6 +1,8 @@
 import unittest
 import tempfile
 import pathlib
+import venv
+import subprocess
 
 import os
 
@@ -13,9 +15,12 @@ class TestProjectGeneration(unittest.TestCase):
         # Create a temporary directory for this test run
         cls.tempdir = tempfile.TemporaryDirectory()
         cls.tempdir_path = pathlib.Path(cls.tempdir.name)
-
         cls.output_path = cls.tempdir_path / "output"
+
+        # Generate virtual environment for this test run
         cls.venv_path = cls.tempdir_path / "venv"
+        cls.venv_python = cls.venv_path / "bin" / "python"
+        venv.create(env_dir=cls.venv_path, system_site_packages=False, with_pip=True)
 
         # Set variables
         cls.project_name = "Modern Python"
@@ -76,6 +81,12 @@ class TestProjectGeneration(unittest.TestCase):
         }
         actual = {path.name: path.is_dir() for path in module_path.iterdir()}
         self.assertEqual(actual, expected)
+
+    def test_install(self):
+        run_command = [self.venv_python, "-m", "pip", "install", self.project_path]
+        subprocess.run(
+            run_command, check=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE
+        )
 
     @classmethod
     def tearDownClass(cls):
