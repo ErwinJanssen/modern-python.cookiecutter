@@ -65,7 +65,8 @@ class TestProjectSlug(BaseTestCase):
         self.assertEqual(result_path.name, project_slug)
 
 
-class TestProjectContents(BaseTestCase):
+class BaseGeneratedTestCase(BaseTestCase):
+
     def setUp(self):
         super().setUp()
 
@@ -78,9 +79,12 @@ class TestProjectContents(BaseTestCase):
             "project_slug": self.project_slug,
         }
 
-    def test_toplevel_defaults(self):
         cookiecutter(**self.default_args)
 
+
+class TestProjectContents(BaseGeneratedTestCase):
+
+    def test_toplevel_defaults(self):
         expected_contents = {
             ".gitignore",
             "pyproject.toml",
@@ -89,4 +93,20 @@ class TestProjectContents(BaseTestCase):
             "src",
         }
         actual_contents = {path.name for path in self.project_path.iterdir()}
+        self.assertEqual(actual_contents, expected_contents)
+
+    def test_src_defaults(self):
+        expected_contents = {
+                self.project_slug,
+        }
+        project_src_path = self.project_path / "src"
+        actual_contents = {path.name for path in project_src_path.iterdir()}
+        self.assertEqual(actual_contents, expected_contents)
+
+    def test_package_defaults(self):
+        expected_contents = {
+                "__init__.py",
+        }
+        project_package_path = self.project_path / "src" / self.project_slug
+        actual_contents = {path.name for path in project_package_path.iterdir()}
         self.assertEqual(actual_contents, expected_contents)
