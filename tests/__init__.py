@@ -49,6 +49,7 @@ class TestProjectGeneration(unittest.TestCase):
 
     def test_toplevel_contents(self):
         expected = {
+            ".git": True,
             ".gitignore": False,
             "pyproject.toml": False,
             "setup.cfg": False,
