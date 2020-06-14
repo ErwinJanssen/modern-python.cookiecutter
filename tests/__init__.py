@@ -4,10 +4,38 @@ import pathlib
 import venv
 import subprocess
 import json
-
 import os
+import shlex
+import sys
 
 from cookiecutter.main import cookiecutter
+
+
+def checked_subprocess_run(command):
+    """Run the command, print the output, and check if the call was successful.
+
+    Using this wrapper functions in the tests offers the follow functionality:
+
+    -   Pass the command as a string, instead of a list. This is easier to
+        write, and `shlex.split` ensure it is split correctly.
+    -   Capture and decode both stdout and stderr.
+    -   Print both stdout and stderr, to include the output in the test case.
+    -   Raise an exception on a non-zero exit status.
+    """
+    args = shlex.split(command)
+    completed = subprocess.run(args, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+
+    out = completed.stdout.decode()
+    err = completed.stderr.decode()
+
+    # Print the subprocess output to include in the test output
+    print(out, file=sys.stdout)
+    print(err, file=sys.stderr)
+
+    # After printing the output, raise an exception on a non-zero exit status.
+    completed.check_returncode()
+
+    return out, err
 
 
 class TestProjectGeneration(unittest.TestCase):
@@ -84,17 +112,13 @@ class TestProjectGeneration(unittest.TestCase):
         self.assertEqual(actual, expected)
 
     def test_install(self):
-        run_command = [self.venv_python, "-m", "pip", "install", self.project_path]
-        subprocess.run(
-            run_command, check=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE
-        )
+        run_command = f"{self.venv_python} -m pip install {self.project_path}"
+        checked_subprocess_run(run_command)
 
         # Verify that name is correct and version number is set
-        run_command = [self.venv_python, "-m", "pip", "list", "--format=json"]
-        proc = subprocess.run(
-            run_command, check=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE
-        )
-        output = json.loads(proc.stdout.decode())
+        run_command = f"{self.venv_python} -m pip list --format json"
+        out, err = checked_subprocess_run(run_command)
+        output = json.loads(out)
         entries = [entry for entry in output if entry["name"] == self.project_slug]
 
         # Exactly one entry should remain

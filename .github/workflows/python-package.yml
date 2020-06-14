@@ -27,4 +27,4 @@ jobs:
 
     - name: Test with unittest
       run: |
-        python -m unittest
+        python -m unittest --buffer
