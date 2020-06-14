@@ -60,7 +60,6 @@ class TestProjectGeneration(unittest.TestCase):
             ".gitignore": False,
             "pyproject.toml": False,
             "setup.cfg": False,
-            "setup.py": False,
             "src": True,
         }
         actual = {path.name: path.is_dir() for path in self.project_path.iterdir()}
