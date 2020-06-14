@@ -3,6 +3,7 @@ import tempfile
 import pathlib
 import venv
 import subprocess
+import json
 
 import os
 
@@ -88,6 +89,20 @@ class TestProjectGeneration(unittest.TestCase):
         subprocess.run(
             run_command, check=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE
         )
+
+        # Verify that name is correct and version number is set
+        run_command = [self.venv_python, "-m", "pip", "list", "--format=json"]
+        proc = subprocess.run(
+            run_command, check=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE
+        )
+        output = json.loads(proc.stdout.decode())
+        entries = [entry for entry in output if entry["name"] == self.project_slug]
+
+        # Exactly one entry should remain
+        self.assertEqual(len(entries), 1)
+
+        # Version number should be set through setuptools_scm, and not be 0.0.0
+        self.assertEqual(entries[0]["version"], "0.1.dev0")
 
     @classmethod
     def tearDownClass(cls):
