@@ -1,6 +1,9 @@
 [build-system]
 requires = [
-    "setuptools >= 30.3.0",
-    "setuptools_scm",
+    "setuptools >= 42",
+    "setuptools_scm[toml] >= 3.4",
     "wheel",
 ]
+
+# Infer version number from source-control management (e.g. Git)
+[tool.setuptools_scm]
