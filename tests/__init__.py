@@ -51,6 +51,9 @@ class TestProjectGeneration(unittest.TestCase):
         cls.venv_python = cls.venv_path / "bin" / "python"
         venv.create(env_dir=cls.venv_path, system_site_packages=False, with_pip=True)
 
+        # Ensure the virtual environment has the most recent version of pip.
+        checked_subprocess_run(f"{cls.venv_python} -m pip install --upgrade pip")
+
         # Set variables
         cls.project_name = "Modern Python"
         cls.project_slug = "modern-python"
