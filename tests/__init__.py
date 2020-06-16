@@ -7,6 +7,7 @@ import json
 import os
 import shlex
 import sys
+import textwrap
 
 from cookiecutter.main import cookiecutter
 
@@ -128,7 +129,20 @@ class TestProjectGeneration(unittest.TestCase):
         self.assertEqual(len(entries), 1)
 
         # Version number should be set through setuptools_scm, and not be 0.0.0
-        self.assertEqual(entries[0]["version"], "0.1.dev0")
+        expected_version = "0.1.dev0"
+        self.assertEqual(entries[0]["version"], expected_version)
+
+        # This version number should be in the `__version__` attribute of the
+        # module.
+        script = textwrap.dedent(
+            f"""\
+            import {self.module_slug}
+            print({self.module_slug}.__version__, end="")
+        """
+        )
+        run_command = f"{self.venv_python} -c '{script}'"
+        out, err = checked_subprocess_run(run_command)
+        self.assertEqual(out, expected_version)
 
     @classmethod
     def tearDownClass(cls):
