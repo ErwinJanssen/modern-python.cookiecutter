@@ -8,3 +8,5 @@ build-backend = "setuptools.build_meta"
 
 # Infer version number from source-control management (e.g. Git)
 [tool.setuptools_scm]
+write_to = "src/{{cookiecutter.module_slug}}/_version.py"
+write_to_template = "__version__ = '{version}'"
