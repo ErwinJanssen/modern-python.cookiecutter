@@ -25,6 +25,6 @@ jobs:
         python -m pip install --upgrade pip
         pip install -r requirements_dev.txt
 
-    - name: Test with unittest
+    - name: Test with Tox
       run: |
-        python -m unittest --buffer
+        tox -e py
