@@ -12,10 +12,10 @@ import textwrap
 from cookiecutter.main import cookiecutter
 
 
-def checked_subprocess_run(command):
+def checked_subprocess_run(command, **kwargs):
     """Run the command, print the output, and check if the call was successful.
 
-    Using this wrapper functions in the tests offers the follow functionality:
+    Using this wrapper function in the tests offers the follow functionality:
 
     -   Pass the command as a string, instead of a list. This is easier to
         write, and `shlex.split` ensure it is split correctly.
@@ -24,7 +24,9 @@ def checked_subprocess_run(command):
     -   Raise an exception on a non-zero exit status.
     """
     args = shlex.split(command)
-    completed = subprocess.run(args, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+    completed = subprocess.run(
+        args, stdout=subprocess.PIPE, stderr=subprocess.PIPE, **kwargs
+    )
 
     out = completed.stdout.decode()
     err = completed.stderr.decode()
@@ -46,14 +48,6 @@ class TestProjectGeneration(unittest.TestCase):
         cls.tempdir = tempfile.TemporaryDirectory()
         cls.tempdir_path = pathlib.Path(cls.tempdir.name)
         cls.output_path = cls.tempdir_path / "output"
-
-        # Generate virtual environment for this test run
-        cls.venv_path = cls.tempdir_path / "venv"
-        cls.venv_python = cls.venv_path / "bin" / "python"
-        venv.create(env_dir=cls.venv_path, system_site_packages=False, with_pip=True)
-
-        # Ensure the virtual environment has the most recent version of pip.
-        checked_subprocess_run(f"{cls.venv_python} -m pip install --upgrade pip")
 
         # Set variables
         cls.project_name = "Modern Python"
@@ -93,6 +87,8 @@ class TestProjectGeneration(unittest.TestCase):
             "pyproject.toml": False,
             "setup.cfg": False,
             "src": True,
+            "tests": True,
+            "tox.ini": False,
         }
         actual = {path.name: path.is_dir() for path in self.project_path.iterdir()}
         self.assertEqual(actual, expected)
@@ -115,34 +111,9 @@ class TestProjectGeneration(unittest.TestCase):
         actual = {path.name: path.is_dir() for path in module_path.iterdir()}
         self.assertEqual(actual, expected)
 
-    def test_install(self):
-        run_command = f"{self.venv_python} -m pip install {self.project_path}"
-        checked_subprocess_run(run_command)
-
-        # Verify that name is correct and version number is set
-        run_command = f"{self.venv_python} -m pip list --format json"
-        out, err = checked_subprocess_run(run_command)
-        output = json.loads(out)
-        entries = [entry for entry in output if entry["name"] == self.project_slug]
-
-        # Exactly one entry should remain
-        self.assertEqual(len(entries), 1)
-
-        # Version number should be set through setuptools_scm, and not be 0.0.0
-        expected_version = "0.1.dev0"
-        self.assertEqual(entries[0]["version"], expected_version)
-
-        # This version number should be in the `__version__` attribute of the
-        # module.
-        script = textwrap.dedent(
-            f"""\
-            import {self.module_slug}
-            print({self.module_slug}.__version__, end="")
-        """
-        )
-        run_command = f"{self.venv_python} -c '{script}'"
-        out, err = checked_subprocess_run(run_command)
-        self.assertEqual(out, expected_version)
+    def test_tox(self):
+        """Run the test suite of the generated project."""
+        checked_subprocess_run("tox -e py", cwd=self.project_path)
 
     @classmethod
     def tearDownClass(cls):
