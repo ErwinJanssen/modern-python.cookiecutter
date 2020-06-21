@@ -84,6 +84,7 @@ class TestProjectGeneration(unittest.TestCase):
         expected = {
             ".git": True,
             ".gitignore": False,
+            ".pre-commit-config.yaml": False,
             "pyproject.toml": False,
             "setup.cfg": False,
             "src": True,
@@ -113,7 +114,7 @@ class TestProjectGeneration(unittest.TestCase):
 
     def test_tox(self):
         """Run the test suite of the generated project."""
-        checked_subprocess_run("tox -e py", cwd=self.project_path)
+        checked_subprocess_run("tox -e py,lint", cwd=self.project_path)
 
     @classmethod
     def tearDownClass(cls):
