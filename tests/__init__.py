@@ -1,13 +1,9 @@
 import unittest
 import tempfile
 import pathlib
-import venv
 import subprocess
-import json
-import os
 import shlex
 import sys
-import textwrap
 
 from cookiecutter.main import cookiecutter
 
@@ -82,6 +78,7 @@ class TestProjectGeneration(unittest.TestCase):
 
     def test_toplevel_contents(self):
         expected = {
+            ".flake8": False,
             ".git": True,
             ".gitignore": False,
             ".pre-commit-config.yaml": False,
