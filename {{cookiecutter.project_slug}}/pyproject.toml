@@ -1,9 +1,18 @@
 [build-system]
 requires = [
+    # Primary build utility
+    # Version 42 or higher is required in order to use setup.cfg
     "setuptools >= 42",
+
+    # Plugin for Setuptools to infer version number from source control
+    # management (e.g. Git)
+    # Version 3.4 or higher is required in order to use setup.cfg
     "setuptools_scm[toml] >= 3.4",
+
+    # Used to build a binary distribution
     "wheel",
 ]
 build-backend = "setuptools.build_meta"
 
+# Enable setuptools_scm to infer the version number from source control
 [tool.setuptools_scm]
