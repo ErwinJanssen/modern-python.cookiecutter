@@ -60,20 +60,6 @@ class TestInstall(unittest.TestCase):
         # This call should not throw an exception
         checked_subprocess_run(f"{self.python} -m pip install .")
 
-        # Check the version number from `pip info`
-        info, _ = checked_subprocess_run(f"{self.python} -m pip show {PACKAGE_NAME}")
-
-        # The info section from pip is formatted as a RFC 2882 mail header.
-        parser = HeaderParser()
-        data = parser.parsestr(info)
-        version = data["version"]
-
-        # Version should be set, should not be the default 0.0.0, and should
-        # match __version__ set in the package.
-        self.assertTrue(version)
-        self.assertNotEqual(version, "0.0.0")
-        self.assertEqual(version, __version__)
-
     def tearDown(self):
         """Delete temporary directory."""
         self.tempdir.cleanup()
