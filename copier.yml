@@ -1,0 +1,22 @@
+# Template settings
+_subdirectory: template
+
+
+# Questions
+project_name:
+  type: str
+  help: Name of the project
+
+project_slug:
+  type: str
+  help: Short name to identify the project (project slug)
+  default: "{{ project_name | lower | replace(' ', '-') }}"
+
+module_slug:
+  type: str
+  help: Importable name for this package
+  default: "{{ project_slug | replace('-', '_') }}"
+
+_tasks:
+  # Initialize a Git repository in the generated project
+  - [git, init, "{{ project_slug }}"]

@@ -1,8 +1,8 @@
-# Cookiecutter: Modern Python project
+# Modern Python project template
 
-This Cookiecutter provides a template for modern Python projects. It provides
-best practices, and uses modern versions of tooling, which allows a better
-packaging experience.
+This repository provides a [Copier](https://copier.readthedocs.io) template for
+modern Python projects. It provides best practices, and uses modern versions of
+tooling, which allows a better packaging experience.
 
 Highlights:
 

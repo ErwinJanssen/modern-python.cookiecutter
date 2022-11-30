@@ -5,7 +5,7 @@ import subprocess
 import shlex
 import sys
 
-from cookiecutter.main import cookiecutter
+import copier
 
 
 def checked_subprocess_run(command, **kwargs):
@@ -51,16 +51,16 @@ class TestProjectGeneration(unittest.TestCase):
         cls.module_slug = "modern_python"
         cls.project_path = cls.output_path / cls.project_slug
 
-        # Generate the project with Cookiecutter
-        cookiecutter(
+        # Generate the project with Copier
+        copier.run_auto(
             # The template to test is located in the current working directory
-            template=".",
-            # Do not ask for input, as this blocks the test runner
-            no_input=True,
+            src_path=".",
             # Use a temporary output directory
-            output_dir=cls.output_path,
+            dst_path=cls.output_path,
+            # Do not ask for input, as this blocks the test runner
+            defaults=True,
             # Additional variables
-            extra_context={
+            data={
                 "project_name": cls.project_name,
                 "project_slug": cls.project_slug,
             },
