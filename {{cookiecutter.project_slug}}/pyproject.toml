@@ -16,3 +16,21 @@ build-backend = "setuptools.build_meta"
 
 # Enable setuptools_scm to infer the version number from source control
 [tool.setuptools_scm]
+
+[tool.ruff.lint]
+select = ["ALL"]
+ignore = [
+    # A few rules conflict with each other. Ruff prefers one by default, but
+    # outputs a warning about it. Explicitly ignoring the conflicting rules
+    # suppresses the warnings:
+
+    # - Conflicts with `no-blank-line-before-class` (D211).
+    "D203",  # one-blank-line-before-class
+
+    # - Conflicts with `multi-line-summary-first-line` (D212).
+    "D213",  # multi-line-summary-second-line
+
+    # The following rules may cause conflicts when used with the formatter:
+    "COM812",  # trailing-comma-on-bare-tuple
+    "ISC001",  # single-line-implicit-string-concatenation
+]

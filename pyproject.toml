@@ -1,0 +1,37 @@
+[tool.ruff.lint]
+select = ["ALL"]
+ignore = [
+    # A few rules conflict with each other. Ruff prefers one by default, but
+    # outputs a warning about it. Explicitly ignoring the conflicting rules
+    # suppresses the warnings:
+
+    # - Conflicts with `no-blank-line-before-class` (D211).
+    "D203",  # one-blank-line-before-class
+
+    # - Conflicts with `multi-line-summary-first-line` (D212).
+    "D213",  # multi-line-summary-second-line
+
+    # The following rules may cause conflicts when used with the formatter:
+    "COM812",  # trailing-comma-on-bare-tuple
+    "ISC001",  # single-line-implicit-string-concatenation
+]
+# These rules are ignored for now, but can be enabled once violations are
+# resolved.
+extend-ignore = [
+    "ANN001",  # missing-type-function-argument
+    "ANN003",  # missing-type-kwargs
+    "ANN201",  # missing-return-type-undocumented-public-function
+    "ANN206",  # missing-return-type-class-method
+    "D100",  # undocumented-public-module
+    "D101",  # undocumented-public-class
+    "D102",  # undocumented-public-method
+    "D103",  # undocumented-public-function
+    "D104",  # undocumented-public-package
+    "INP001",  # implicit-namespace-package
+    "PLW1510",  # subprocess-run-without-check
+    "PT",  # pytest
+    "S603",  # subprocess-without-shell-equals-true
+    "S607",  # start-process-with-partial-path
+    "T201",  # print
+    "UP022",  # replace-stdout-stderr
+]
