@@ -1,18 +1,23 @@
 [build-system]
 requires = [
     # Primary build utility
-    # Version 42 or higher is required in order to use setup.cfg
-    "setuptools >= 42",
+    "setuptools >= 64",
 
     # Plugin for Setuptools to infer version number from source control
     # management (e.g. Git)
-    # Version 3.4 or higher is required in order to use setup.cfg
-    "setuptools_scm[toml] >= 3.4",
+    "setuptools-scm >= 8",
 
     # Used to build a binary distribution
     "wheel",
 ]
 build-backend = "setuptools.build_meta"
+
+[project]
+name = "{{ cookiecutter.project_slug }}"
+dynamic = [
+    # setuptools-scm is used to dynamically set the version.
+    "version"
+]
 
 # Enable setuptools_scm to infer the version number from source control
 [tool.setuptools_scm]
