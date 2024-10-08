@@ -1,9 +1,9 @@
-import unittest
-import tempfile
 import pathlib
-import subprocess
 import shlex
+import subprocess
 import sys
+import tempfile
+import unittest
 
 from cookiecutter.main import cookiecutter
 
