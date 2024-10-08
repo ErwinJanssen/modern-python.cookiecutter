@@ -7,5 +7,16 @@ def initialize_git():
     )
 
 
+def initialize_pre_commit():
+    subprocess.run(
+        ["pre-commit", "install"],
+        # This is allowed to fail, in case pre-commit is not installed.
+        check=False,
+        stdout=subprocess.PIPE,
+        stderr=subprocess.PIPE,
+    )
+
+
 if __name__ == "__main__":
     initialize_git()
+    initialize_pre_commit()
