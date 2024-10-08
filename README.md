@@ -19,11 +19,11 @@ Highlights:
     documentation and READMEs, but PyPi only supported reStructedText for
     a long time. Markdown support was added in 2018.
 
--   Use declarative configuration as much as possible. The build tools are
-    specified in `pyproject.toml`, and the package data is in setup.cfg. This
-    means that a `setup.py` (the default way for many project to manage their
-    metadata) is no longer necessary. This reduces complexity, and makes it
-    easier to transition to a different build system if desired.
+-   Use declarative configuration as much as possible. The build tools and
+    package data are specified in `pyproject.toml`. This means that
+    a `setup.py` (the default way for many project to manage their metadata) is
+    no longer necessary. This reduces complexity, and makes it easier to
+    transition to a different build system if desired.
 
 -   Rely on source control management to specify the version number (e.g. git
     tags), instead of manually keeping them up to date in `setup.cfg` and
